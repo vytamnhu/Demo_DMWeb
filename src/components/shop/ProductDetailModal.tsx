@@ -6,9 +6,7 @@ import {
   Heart, 
   ShoppingBag, 
   Clock, 
-  Flame, 
   ShieldCheck, 
-  Check, 
   AlertTriangle,
   Star,
   Share2
@@ -49,33 +47,30 @@ export const ProductDetailModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-      <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative border border-[#E8E2D5] my-auto">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+      <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative border border-stone-200/80 my-auto animate-scaleUp">
         
         {/* Close Button */}
         <button
           onClick={() => setSelectedProduct(null)}
-          className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/80 hover:bg-zinc-100 text-zinc-600 transition-colors shadow-xs"
+          className="absolute top-4 right-4 z-20 p-2 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 p-6 sm:p-8">
           
-          {/* Left Column: Image Gallery & Badges */}
+          {/* Left Column: Image Gallery */}
           <div className="md:col-span-6 space-y-4">
-            <div className="aspect-4/3 rounded-2xl overflow-hidden bg-[#FAF8F5] border border-zinc-200 relative group">
+            <div className="aspect-4/3 rounded-2xl overflow-hidden bg-stone-100 relative">
               <img
                 src={selectedProduct.images[activeImageIdx] || selectedProduct.images[0]}
                 alt={selectedProduct.name}
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                <span className="bg-[#1E7547] text-white text-xs font-bold px-2.5 py-1 rounded shadow-xs">
-                  🔥 {selectedProduct.nutrition.calories} kcal
-                </span>
-                <span className="bg-[#E59828] text-white text-xs font-bold px-2.5 py-1 rounded shadow-xs">
-                  {selectedProduct.nutrition.totalSugars}g Đường / khẩu phần
+                <span className="bg-white/95 backdrop-blur-md text-[#163824] text-xs font-semibold px-3 py-1 rounded-full shadow-2xs">
+                  {selectedProduct.nutrition.calories} kcal / khẩu phần
                 </span>
               </div>
             </div>
@@ -87,8 +82,8 @@ export const ProductDetailModal: React.FC = () => {
                   <button
                     key={idx}
                     onClick={() => setActiveImageIdx(idx)}
-                    className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${
-                      activeImageIdx === idx ? 'border-[#1E7547] scale-105' : 'border-zinc-200 opacity-70 hover:opacity-100'
+                    className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                      activeImageIdx === idx ? 'border-[#163824]' : 'border-transparent opacity-60 hover:opacity-100'
                     }`}
                   >
                     <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
@@ -97,15 +92,15 @@ export const ProductDetailModal: React.FC = () => {
               </div>
             )}
 
-            {/* Quick badges under image */}
-            <div className="bg-[#FAF8F5] p-3.5 rounded-2xl border border-[#EFEAE0] space-y-2 text-xs">
-              <div className="flex items-center gap-2 text-zinc-700">
-                <Clock className="w-4 h-4 text-[#1E7547] shrink-0" />
-                <span><strong>Thời điểm dùng tối ưu:</strong> {selectedProduct.bestTime}</span>
+            {/* Quick Usage Notes */}
+            <div className="bg-[#FAF8F5] p-4 rounded-2xl border border-stone-200/60 space-y-2 text-xs text-stone-600">
+              <div className="flex items-start gap-2">
+                <Clock className="w-4 h-4 text-[#1E7547] shrink-0 mt-0.5" />
+                <span><strong className="text-stone-800">Thời điểm dùng:</strong> {selectedProduct.bestTime}</span>
               </div>
-              <div className="flex items-center gap-2 text-zinc-700">
-                <ShieldCheck className="w-4 h-4 text-[#D97706] shrink-0" />
-                <span><strong>Hương vị:</strong> {selectedProduct.flavorProfile}</span>
+              <div className="flex items-start gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#1E7547] shrink-0 mt-0.5" />
+                <span><strong className="text-stone-800">Hương vị:</strong> {selectedProduct.flavorProfile}</span>
               </div>
             </div>
           </div>
@@ -113,94 +108,68 @@ export const ProductDetailModal: React.FC = () => {
           {/* Right Column: Information & Actions */}
           <div className="md:col-span-6 flex flex-col justify-between">
             <div>
-              {/* Category & Tags */}
-              <div className="flex flex-wrap items-center gap-1.5 mb-2">
-                {selectedProduct.dietaryTags.map((tag, i) => (
-                  <span
-                    key={i}
-                    className="text-[11px] font-bold text-[#1E7547] bg-[#EBF7EE] px-2.5 py-0.5 rounded-full border border-[#BCE8C6]"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+              {/* Dietary Tags */}
+              <p className="text-xs font-semibold text-[#1E7547] mb-1.5">
+                {selectedProduct.dietaryTags.join(' • ')}
+              </p>
 
               {/* Title */}
-              <h2 className="text-xl sm:text-2xl font-bold text-zinc-900 leading-tight">
+              <h2 className="text-xl sm:text-2xl font-extrabold text-[#163824] leading-snug pr-8">
                 {selectedProduct.name}
               </h2>
 
-              <p className="text-xs sm:text-sm text-zinc-500 mt-1 italic">
-                {selectedProduct.tagline}
-              </p>
-
               {/* Rating & Sold count */}
-              <div className="flex items-center gap-3 mt-3 pb-3 border-b border-zinc-100 text-xs">
-                <div className="flex items-center text-[#F59E0B]">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                  ))}
-                  <span className="font-bold text-zinc-800 ml-1.5">{selectedProduct.rating}</span>
+              <div className="flex items-center gap-3 mt-2.5 pb-3 border-b border-stone-100 text-xs text-stone-500">
+                <div className="flex items-center text-amber-400">
+                  <Star className="w-3.5 h-3.5 fill-current" />
+                  <span className="font-bold text-stone-800 ml-1">{selectedProduct.rating}</span>
                 </div>
-                <span className="text-zinc-300">|</span>
-                <span className="text-zinc-500">{selectedProduct.reviewCount} đánh giá</span>
-                <span className="text-zinc-300">|</span>
-                <span className="text-zinc-500">Đã bán {selectedProduct.soldCount}</span>
+                <span>•</span>
+                <span>{selectedProduct.reviewCount} đánh giá</span>
+                <span>•</span>
+                <span>Đã bán {selectedProduct.soldCount}</span>
               </div>
 
               {/* Price */}
-              <div className="my-4 flex items-baseline gap-3">
-                <span className="text-3xl font-black text-[#1E7547]">
+              <div className="my-4 flex items-baseline gap-2.5">
+                <span className="text-2xl sm:text-3xl font-extrabold text-[#163824]">
                   {selectedProduct.price.toLocaleString('vi-VN')}₫
                 </span>
                 {selectedProduct.originalPrice && (
-                  <span className="text-sm text-zinc-400 line-through">
+                  <span className="text-sm text-stone-400 line-through">
                     {selectedProduct.originalPrice.toLocaleString('vi-VN')}₫
                   </span>
                 )}
-                <span className="text-xs text-zinc-500 bg-zinc-100 px-2 py-0.5 rounded">
-                  / Khẩu phần {selectedProduct.nutrition.servingSize}
+                <span className="text-xs text-stone-500">
+                  ({selectedProduct.nutrition.servingSize})
                 </span>
               </div>
 
-              {/* Story / Description snippet */}
-              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
+              {/* Description */}
+              <p className="text-xs sm:text-[13px] text-stone-600 leading-relaxed">
                 {selectedProduct.description}
               </p>
 
-              {/* Tabs for Nutrition, Ingredients, Reviews */}
-              <div className="mt-5 border-t border-zinc-100 pt-3">
-                <div className="flex gap-2 border-b border-zinc-200 pb-2">
-                  <button
-                    onClick={() => setActiveTab('nutrition')}
-                    className={`text-xs font-bold pb-1 transition-colors border-b-2 -mb-2.5 ${
-                      activeTab === 'nutrition'
-                        ? 'border-[#1E7547] text-[#1E7547]'
-                        : 'border-transparent text-zinc-500 hover:text-zinc-800'
-                    }`}
-                  >
-                    Bảng Nutrition Facts
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('ingredients')}
-                    className={`text-xs font-bold pb-1 transition-colors border-b-2 -mb-2.5 ${
-                      activeTab === 'ingredients'
-                        ? 'border-[#1E7547] text-[#1E7547]'
-                        : 'border-transparent text-zinc-500 hover:text-zinc-800'
-                    }`}
-                  >
-                    Thành phần & Dị ứng
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('reviews')}
-                    className={`text-xs font-bold pb-1 transition-colors border-b-2 -mb-2.5 ${
-                      activeTab === 'reviews'
-                        ? 'border-[#1E7547] text-[#1E7547]'
-                        : 'border-transparent text-zinc-500 hover:text-zinc-800'
-                    }`}
-                  >
-                    Đánh giá ({selectedProduct.reviewCount})
-                  </button>
+              {/* Tabs */}
+              <div className="mt-5 border-t border-stone-100 pt-3">
+                <div className="flex gap-4 border-b border-stone-200/80 pb-2">
+                  {[
+                    { id: 'nutrition', label: 'Bảng Nutrition Facts' },
+                    { id: 'ingredients', label: 'Thành phần & Dị ứng' },
+                    { id: 'reviews', label: `Đánh giá (${selectedProduct.reviewCount})` }
+                  ].map((t) => (
+                    <button
+                      key={t.id}
+                      onClick={() => setActiveTab(t.id as any)}
+                      className={`text-xs font-bold pb-1.5 transition-colors border-b-2 -mb-2.5 cursor-pointer ${
+                        activeTab === t.id
+                          ? 'border-[#163824] text-[#163824]'
+                          : 'border-transparent text-stone-400 hover:text-stone-700'
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
                 </div>
 
                 <div className="mt-4 max-h-56 overflow-y-auto pr-1">
@@ -214,46 +183,45 @@ export const ProductDetailModal: React.FC = () => {
                   {activeTab === 'ingredients' && (
                     <div className="space-y-3 text-xs">
                       <div>
-                        <h4 className="font-bold text-zinc-800 mb-1.5">🌱 Nguyên liệu thành phần:</h4>
-                        <ul className="list-disc pl-5 space-y-1 text-zinc-600">
+                        <h4 className="font-bold text-stone-800 mb-1.5">Nguyên liệu thành phần:</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-stone-600">
                           {selectedProduct.ingredients.map((ing, i) => (
                             <li key={i}>{ing}</li>
                           ))}
                         </ul>
                       </div>
 
-                      <div className="p-3 bg-amber-50 rounded-xl border border-amber-200">
+                      <div className="p-3 bg-amber-50/70 rounded-xl border border-amber-200/80">
                         <h4 className="font-bold text-amber-900 flex items-center gap-1.5 mb-1">
                           <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                          Cảnh báo dị ứng:
+                          Lưu ý dị ứng:
                         </h4>
                         <p className="text-amber-800">
-                          Sản phẩm có chứa: <strong className="font-bold">{selectedProduct.allergens.join(', ')}</strong>.
-                          Không sử dụng nếu quý khách có cơ địa mẫn cảm với các thành phần trên.
+                          Sản phẩm có chứa: <strong>{selectedProduct.allergens.join(', ')}</strong>.
                         </p>
                       </div>
                     </div>
                   )}
 
                   {activeTab === 'reviews' && (
-                    <div className="space-y-3 text-xs">
-                      <div className="p-3 bg-[#FAF8F5] rounded-xl border border-zinc-200">
+                    <div className="space-y-2.5 text-xs">
+                      <div className="p-3 bg-[#FAF8F5] rounded-xl border border-stone-200/60">
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-zinc-800">Khách hàng Nguyễn Lan Anh</span>
-                          <span className="text-[#F59E0B]">★★★★★</span>
+                          <span className="font-bold text-stone-800">Nguyễn Lan Anh</span>
+                          <span className="text-amber-400">★★★★★</span>
                         </div>
-                        <p className="text-zinc-600 mt-1 italic">
-                          "Bánh ăn rất giòn và bùi, vị ngọt thanh tự nhiên từ mật dừa chứ không bị gắt. Ăn trước giờ tập yoga rất nhẹ bụng!"
+                        <p className="text-stone-600 mt-1">
+                          "Bánh giòn bùi, vị ngọt dịu tự nhiên chứ không bị gắt. Dùng làm bữa phụ rất nhẹ bụng."
                         </p>
                       </div>
 
-                      <div className="p-3 bg-[#FAF8F5] rounded-xl border border-zinc-200">
+                      <div className="p-3 bg-[#FAF8F5] rounded-xl border border-stone-200/60">
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-zinc-800">Huấn luyện viên Tuấn Hưng</span>
-                          <span className="text-[#F59E0B]">★★★★★</span>
+                          <span className="font-bold text-stone-800">HLV Tuấn Hưng</span>
+                          <span className="text-amber-400">★★★★★</span>
                         </div>
-                        <p className="text-zinc-600 mt-1 italic">
-                          "Bảng macro cực chuẩn cho dân gym. Tính toán calo minh bạch rõ ràng từng gam."
+                        <p className="text-stone-600 mt-1">
+                          "Bảng dinh dưỡng rõ ràng từng gam, rất tiện để kiểm soát lượng calo nạp vào hàng ngày."
                         </p>
                       </div>
                     </div>
@@ -262,24 +230,24 @@ export const ProductDetailModal: React.FC = () => {
               </div>
             </div>
 
-            {/* Bottom Actions: Quantity + Add + Buy Now */}
-            <div className="mt-6 pt-4 border-t border-zinc-100 space-y-3">
+            {/* Bottom Actions */}
+            <div className="mt-6 pt-4 border-t border-stone-100 space-y-3">
               <div className="flex items-center justify-between gap-4">
                 
                 {/* Quantity selector */}
-                <div className="flex items-center border border-zinc-200 rounded-xl overflow-hidden bg-[#FAF8F5]">
+                <div className="flex items-center border border-stone-200 rounded-full p-1 bg-[#FAF8F5]">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-3.5 py-2 hover:bg-zinc-200 font-bold text-zinc-700 transition-colors"
+                    className="w-8 h-8 rounded-full hover:bg-white font-bold text-stone-700 transition-colors cursor-pointer"
                   >
                     -
                   </button>
-                  <span className="px-4 py-2 text-xs font-black text-zinc-900">
+                  <span className="w-10 text-center text-xs font-bold text-[#163824]">
                     {quantity}
                   </span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="px-3.5 py-2 hover:bg-zinc-200 font-bold text-zinc-700 transition-colors"
+                    className="w-8 h-8 rounded-full hover:bg-white font-bold text-stone-700 transition-colors cursor-pointer"
                   >
                     +
                   </button>
@@ -288,8 +256,8 @@ export const ProductDetailModal: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => toggleWishlist(selectedProduct.id)}
-                    className={`p-2.5 rounded-xl border transition-colors ${
-                      isWished ? 'bg-rose-50 text-rose-500 border-rose-200' : 'text-zinc-500 border-zinc-200 hover:bg-zinc-50'
+                    className={`p-2.5 rounded-full border transition-colors cursor-pointer ${
+                      isWished ? 'bg-rose-50 text-rose-500 border-rose-200' : 'text-stone-500 border-stone-200 hover:bg-stone-50'
                     }`}
                     title="Yêu thích"
                   >
@@ -297,7 +265,7 @@ export const ProductDetailModal: React.FC = () => {
                   </button>
                   <button
                     onClick={handleShare}
-                    className="p-2.5 rounded-xl border border-zinc-200 text-zinc-500 hover:bg-zinc-50 transition-colors"
+                    className="p-2.5 rounded-full border border-stone-200 text-stone-500 hover:bg-stone-50 transition-colors cursor-pointer"
                     title="Chia sẻ"
                   >
                     <Share2 className="w-4 h-4" />
@@ -308,17 +276,17 @@ export const ProductDetailModal: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={handleAddToCart}
-                  className="bg-[#EBF7EE] hover:bg-[#D8F3DF] text-[#1E7547] border border-[#BCE8C6] py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
+                  className="bg-[#EEF6F0] hover:bg-[#E0F0E4] text-[#163824] py-3.5 rounded-full font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
-                  <ShoppingBag className="w-4 h-4" />
-                  <span>Thêm Vào Giỏ</span>
+                  <ShoppingBag className="w-4 h-4 text-[#1E7547]" />
+                  <span>Thêm vào giỏ</span>
                 </button>
 
                 <button
                   onClick={handleBuyNow}
-                  className="bg-[#1E7547] hover:bg-[#165a36] text-white py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
+                  className="bg-[#163824] hover:bg-[#1E7547] text-white py-3.5 rounded-full font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
                 >
-                  <span>Mua Ngay ({(selectedProduct.price * quantity).toLocaleString('vi-VN')}₫)</span>
+                  <span>Mua ngay • {(selectedProduct.price * quantity).toLocaleString('vi-VN')}₫</span>
                 </button>
               </div>
             </div>
@@ -331,4 +299,3 @@ export const ProductDetailModal: React.FC = () => {
     </div>
   );
 };
-

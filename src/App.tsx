@@ -37,7 +37,7 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-[#1C2D20] flex flex-col font-sans selection:bg-[#1E7547] selection:text-white">
+    <div className="min-h-screen bg-[#FAF8F5] text-[#1C2826] flex flex-col font-sans selection:bg-[#1E7547] selection:text-white">
       {/* Header */}
       <Header
         onNavigateToCatalog={scrollToCatalog}
@@ -45,28 +45,28 @@ const MainLayout: React.FC = () => {
         onNavigateToBlog={scrollToBlog}
       />
 
-      {/* Main Page Flow with Balanced Rhythm & Generous Whitespace */}
+      {/* Main Page Flow — Clean, Logical & Uncluttered */}
       <main className="flex-1">
         {/* 1. Hero Section */}
         <HeroSection onExploreCatalog={scrollToCatalog} />
 
-        {/* 2. Core Values & Clean Transparency Comparison */}
-        <CoreValues />
-
-        {/* 3. Curated Top 4 Best-sellers & Custom Combo Banner */}
-        <FeaturedSection onViewAllCatalog={scrollToCatalog} />
-
-        {/* 4. Brand Farm-to-Table Craft Roasting Narrative (Natural Visual Break) */}
-        <div ref={storyRef}>
-          <FarmStorySection />
-        </div>
-
-        {/* 5. Complete Product Catalog with Smart Filtering (Calories, Sugars, Allergens) */}
+        {/* 2. Product Catalog with Clean Horizontal Filter Bar */}
         <div ref={catalogRef}>
           <ProductCatalog />
         </div>
 
-        {/* 6. Customer Testimonials & Social Proof */}
+        {/* 3. Custom Combo Builder Banner */}
+        <FeaturedSection onViewAllCatalog={scrollToCatalog} />
+
+        {/* 4. Core Values & Clean Comparison */}
+        <CoreValues />
+
+        {/* 5. Brand Farm-to-Table Story */}
+        <div ref={storyRef}>
+          <FarmStorySection />
+        </div>
+
+        {/* 6. Customer Testimonials */}
         <CustomerReviews />
 
         {/* 7. Nutrition & Calorie Education Blog */}
@@ -82,7 +82,7 @@ const MainLayout: React.FC = () => {
         onNavigateToBlog={scrollToBlog}
       />
 
-      {/* Floating Actions for AI Chatbot & Combo Builder */}
+      {/* Clean Single Floating Action for AI Nutrition Assistant */}
       <FloatingActions />
 
       {/* Global Interactive Modals & Drawers */}

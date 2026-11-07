@@ -3,7 +3,7 @@ import { useStore } from '../../context/StoreContext';
 import { ProductCard } from './ProductCard';
 import { ALL_ALLERGENS, ALL_DIETARY_OPTIONS } from '../../data/productsData';
 import { Allergen, DietaryTag } from '../../types';
-import { Filter, SlidersHorizontal, RotateCcw, Flame, Check, X } from 'lucide-react';
+import { SlidersHorizontal, RotateCcw, Flame, X, ChevronDown } from 'lucide-react';
 
 export const ProductCatalog: React.FC = () => {
   const { products } = useStore();
@@ -14,9 +14,9 @@ export const ProductCatalog: React.FC = () => {
   const [maxCalories, setMaxCalories] = useState<number>(200);
   const [sugarFilter, setSugarFilter] = useState<'all' | 'zero' | 'low'>('all');
   const [sortBy, setSortBy] = useState<'bestseller' | 'price-asc' | 'price-desc' | 'calories-asc' | 'rating'>('bestseller');
-  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [isAdvancedFilterOpen, setIsAdvancedFilterOpen] = useState(false);
 
-  // Toggle dietary tag
+  // Quick single-click dietary tab or toggle
   const toggleDietary = (tag: DietaryTag) => {
     setSelectedDietary(prev => 
       prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
@@ -41,20 +41,15 @@ export const ProductCatalog: React.FC = () => {
   // Filter and Sort Logic
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
-      // 1. Calories filter
       if (product.nutrition.calories > maxCalories) return false;
-
-      // 2. Sugar filter
       if (sugarFilter === 'zero' && product.nutrition.totalSugars > 0) return false;
       if (sugarFilter === 'low' && product.nutrition.totalSugars > 2) return false;
 
-      // 3. Dietary tags filter (must match selected)
       if (selectedDietary.length > 0) {
         const matchesDiet = selectedDietary.some(tag => product.dietaryTags.includes(tag));
         if (!matchesDiet) return false;
       }
 
-      // 4. Allergen exclusion filter (cannot contain ANY excluded allergen)
       if (excludedAllergens.length > 0) {
         const hasAllergen = product.allergens.some(a => excludedAllergens.includes(a));
         if (hasAllergen) return false;
@@ -71,171 +66,167 @@ export const ProductCatalog: React.FC = () => {
     });
   }, [products, maxCalories, sugarFilter, selectedDietary, excludedAllergens, sortBy]);
 
-  const activeFilterCount = selectedDietary.length + excludedAllergens.length + (sugarFilter !== 'all' ? 1 : 0) + (maxCalories < 200 ? 1 : 0);
+  const advancedFilterCount = excludedAllergens.length + (sugarFilter !== 'all' ? 1 : 0) + (maxCalories < 200 ? 1 : 0);
+  const totalFilterCount = selectedDietary.length + advancedFilterCount;
+
+  const quickDietTabs: { label: string; value: DietaryTag | 'ALL' }[] = [
+    { label: 'Tất cả', value: 'ALL' },
+    { label: 'Eat Clean', value: 'Eat Clean' },
+    { label: 'Giàu Protein', value: 'Giàu Protein' },
+    { label: 'Thuần Chay (Vegan)', value: 'Vegan' },
+    { label: 'Không đường', value: 'Không đường' },
+    { label: 'Không hạt (Nut-Free)', value: 'Nut-Free' },
+    { label: 'Keto', value: 'Keto' },
+  ];
 
   return (
-    <section id="catalog-section" className="py-14 sm:py-20 bg-[#FAF8F5] border-b border-[#EAE5DA]">
+    <section id="catalog-section" className="py-16 sm:py-24 bg-[#FAF8F5] border-b border-stone-200/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Catalog Banner Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10">
-          <span className="text-xs font-bold uppercase tracking-wider text-[#1E7547] bg-[#EBF7EE] px-3.5 py-1.5 rounded-full border border-[#BCE8C6]">
-            Cửa Hàng Dinh Dưỡng
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#153E26] mt-2">
-            Danh Mục Toàn Bộ Bánh Ngũ Cốc SOWELL
-          </h2>
-          <p className="text-zinc-600 text-sm sm:text-base mt-2">
-            Bộ lọc thông minh giúp bạn chọn chính xác bánh theo hạn mức Calo, lượng đường và loại trừ hoàn toàn các loại hạt gây dị ứng.
+        {/* Clean Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#1E7547]">
+              Cửa hàng SOWELL
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#163824] mt-1">
+              Bộ Sưu Tập Bánh Dinh Dưỡng
+            </h2>
+          </div>
+          <p className="text-stone-500 text-sm max-w-md">
+            Chọn nhanh chế độ ăn hoặc mở bộ lọc thông minh để giới hạn mức Calo và loại trừ hạt gây dị ứng.
           </p>
         </div>
 
-        {/* Toolbar: Result count + Mobile toggle + Sort */}
-        <div className="bg-white rounded-2xl p-4 mb-8 border border-zinc-200/90 flex flex-wrap items-center justify-between gap-4 shadow-2xs">
+        {/* Streamlined Horizontal Filter Bar */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6">
           
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
-              className="lg:hidden bg-[#1E7547] text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer shadow-xs"
-            >
-              <Filter className="w-4 h-4" />
-              <span>Bộ lọc ({activeFilterCount})</span>
-            </button>
+          {/* Quick Dietary Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 lg:pb-0">
+            {quickDietTabs.map((tab) => {
+              const isAll = tab.value === 'ALL';
+              const isActive = isAll 
+                ? selectedDietary.length === 0 
+                : selectedDietary.includes(tab.value as DietaryTag);
 
-            <p className="text-xs sm:text-sm font-semibold text-zinc-700">
-              Hiển thị <span className="text-[#1E7547] font-black">{filteredProducts.length}</span> sản phẩm phù hợp
-            </p>
-
-            {activeFilterCount > 0 && (
-              <button
-                onClick={resetFilters}
-                className="text-xs text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1 cursor-pointer bg-rose-50 px-2.5 py-1 rounded-lg"
-              >
-                <RotateCcw className="w-3 h-3" />
-                <span>Đặt lại ({activeFilterCount})</span>
-              </button>
-            )}
+              return (
+                <button
+                  key={tab.value}
+                  onClick={() => {
+                    if (isAll) {
+                      setSelectedDietary([]);
+                    } else {
+                      toggleDietary(tab.value as DietaryTag);
+                    }
+                  }}
+                  className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-[#163824] text-white shadow-xs'
+                      : 'bg-white text-stone-600 border border-stone-200/80 hover:border-stone-300'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-medium">
-            <span className="text-zinc-500 hidden sm:inline">Sắp xếp theo:</span>
+          {/* Right Controls: Smart Filter Toggle + Sort */}
+          <div className="flex items-center justify-between sm:justify-end gap-2.5 shrink-0">
+            <button
+              onClick={() => setIsAdvancedFilterOpen(!isAdvancedFilterOpen)}
+              className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2 border transition-all cursor-pointer ${
+                isAdvancedFilterOpen || advancedFilterCount > 0
+                  ? 'bg-[#EEF6F0] text-[#163824] border-[#1E7547]/40'
+                  : 'bg-white text-stone-700 border-stone-200/80 hover:border-stone-300'
+              }`}
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-[#1E7547]" />
+              <span>Lọc Calo & Dị ứng</span>
+              {advancedFilterCount > 0 && (
+                <span className="bg-[#1E7547] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {advancedFilterCount}
+                </span>
+              )}
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isAdvancedFilterOpen ? 'rotate-180' : ''}`} />
+            </button>
+
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-[#FAF8F5] border border-zinc-200 rounded-xl px-3 py-2 text-xs font-bold text-zinc-800 focus:outline-none focus:border-[#1E7547] cursor-pointer"
+              className="bg-white border border-stone-200/80 rounded-full px-4 py-2 text-xs font-semibold text-stone-700 focus:outline-none focus:border-[#1E7547] cursor-pointer"
             >
-              <option value="bestseller">🔥 Bán chạy nhất</option>
-              <option value="rating">★ Đánh giá cao nhất</option>
-              <option value="calories-asc">⚡ Calo thấp nhất</option>
-              <option value="price-asc">₫ Giá: Thấp đến Cao</option>
-              <option value="price-desc">₫ Giá: Cao đến Thấp</option>
+              <option value="bestseller">Sắp xếp: Bán chạy nhất</option>
+              <option value="rating">Đánh giá cao nhất</option>
+              <option value="calories-asc">Calo: Thấp đến Cao</option>
+              <option value="price-asc">Giá: Thấp đến Cao</option>
+              <option value="price-desc">Giá: Cao đến Thấp</option>
             </select>
           </div>
-
         </div>
 
-        {/* Main Grid: Sidebar + Products */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          {/* Sidebar Filters (Desktop + Mobile slide) */}
-          <aside className={`lg:col-span-3 space-y-6 ${mobileFilterOpen ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-white rounded-2xl p-5 border border-zinc-200/90 shadow-2xs space-y-6">
+        {/* Collapsible Smart Filter Drawer (Clean 3-Column Panel) */}
+        {isAdvancedFilterOpen && (
+          <div className="bg-white rounded-3xl p-6 mb-8 border border-stone-200/80 shadow-sm animate-fadeIn">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
               
-              <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
-                <h3 className="font-bold text-sm text-[#153E26] flex items-center gap-2">
-                  <SlidersHorizontal className="w-4 h-4 text-[#1E7547]" />
-                  <span>Bộ Lọc Thông Minh</span>
-                </h3>
-                {activeFilterCount > 0 && (
-                  <button onClick={resetFilters} className="text-[11px] text-zinc-400 hover:text-zinc-700 cursor-pointer">
-                    Xóa tất cả
-                  </button>
-                )}
-              </div>
-
-              {/* 1. Calorie Range Slider & Quick Presets */}
-              <div>
-                <div className="flex justify-between items-center text-xs mb-2">
-                  <span className="font-bold text-zinc-700 flex items-center gap-1">
-                    <Flame className="w-3.5 h-3.5 text-[#D97706]" />
-                    Mức Calo tối đa:
-                  </span>
-                  <span className="font-black text-[#1E7547] text-sm bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-100 font-mono">
-                    ≤ {maxCalories} kcal
-                  </span>
+              {/* Col 1: Calorie & Sugar Control */}
+              <div className="md:col-span-4 space-y-5">
+                <div>
+                  <div className="flex justify-between items-center text-xs mb-2">
+                    <span className="font-semibold text-stone-700 flex items-center gap-1.5">
+                      <Flame className="w-3.5 h-3.5 text-[#1E7547]" />
+                      Mức Calo tối đa mỗi khẩu phần
+                    </span>
+                    <span className="font-bold text-[#163824] bg-[#EEF6F0] px-2.5 py-0.5 rounded-full">
+                      ≤ {maxCalories} kcal
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="130"
+                    max="200"
+                    step="5"
+                    value={maxCalories}
+                    onChange={(e) => setMaxCalories(Number(e.target.value))}
+                    className="w-full accent-[#163824] cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[11px] text-stone-400 mt-1">
+                    <span>130 kcal</span>
+                    <span>165 kcal</span>
+                    <span>200 kcal</span>
+                  </div>
                 </div>
-                <input
-                  type="range"
-                  min="130"
-                  max="200"
-                  step="5"
-                  value={maxCalories}
-                  onChange={(e) => setMaxCalories(Number(e.target.value))}
-                  className="w-full accent-[#1E7547] cursor-pointer"
-                />
-                
-                {/* Clean Quick Calorie Pills */}
-                <div className="grid grid-cols-3 gap-1.5 mt-2">
-                  {[
-                    { label: '≤ 140 kcal', val: 140, tip: 'Giảm mỡ' },
-                    { label: '≤ 160 kcal', val: 160, tip: 'Bữa xế' },
-                    { label: 'Tất cả', val: 200, tip: 'Đầy đủ' }
-                  ].map((preset) => (
-                    <button
-                      key={preset.val}
-                      onClick={() => setMaxCalories(preset.val)}
-                      className={`text-[10px] py-1 px-1 rounded-lg border text-center transition-all cursor-pointer ${
-                        maxCalories === preset.val
-                          ? 'bg-[#1E7547] text-white border-[#1E7547] font-bold'
-                          : 'bg-[#FAF8F5] text-zinc-600 border-zinc-200 hover:border-zinc-300'
-                      }`}
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
+
+                <div>
+                  <label className="block text-xs font-semibold text-stone-700 mb-2">Hàm lượng đường</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { id: 'all', label: 'Tất cả' },
+                      { id: 'zero', label: '0g Đường' },
+                      { id: 'low', label: '< 2g Đường' }
+                    ].map((s) => (
+                      <button
+                        key={s.id}
+                        onClick={() => setSugarFilter(s.id as any)}
+                        className={`text-xs py-2 px-2.5 rounded-xl font-medium border transition-colors cursor-pointer ${
+                          sugarFilter === s.id
+                            ? 'bg-[#163824] text-white border-[#163824]'
+                            : 'bg-stone-50 text-stone-600 border-stone-200/70 hover:bg-stone-100'
+                        }`}
+                      >
+                        {s.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* 2. Sugar Filter */}
-              <div>
-                <label className="block text-xs font-bold text-zinc-700 mb-2">Lượng đường trong bánh</label>
-                <div className="grid grid-cols-3 gap-1.5">
-                  <button
-                    onClick={() => setSugarFilter('all')}
-                    className={`text-[11px] py-1.5 px-2 rounded-lg font-bold border transition-colors cursor-pointer ${
-                      sugarFilter === 'all'
-                        ? 'bg-[#1E7547] text-white border-[#1E7547]'
-                        : 'bg-zinc-50 text-zinc-700 border-zinc-200'
-                    }`}
-                  >
-                    Tất cả
-                  </button>
-                  <button
-                    onClick={() => setSugarFilter('zero')}
-                    className={`text-[11px] py-1.5 px-2 rounded-lg font-bold border transition-colors cursor-pointer ${
-                      sugarFilter === 'zero'
-                        ? 'bg-[#1E7547] text-white border-[#1E7547]'
-                        : 'bg-zinc-50 text-zinc-700 border-zinc-200'
-                    }`}
-                  >
-                    0g Đường
-                  </button>
-                  <button
-                    onClick={() => setSugarFilter('low')}
-                    className={`text-[11px] py-1.5 px-2 rounded-lg font-bold border transition-colors cursor-pointer ${
-                      sugarFilter === 'low'
-                        ? 'bg-[#1E7547] text-white border-[#1E7547]'
-                        : 'bg-zinc-50 text-zinc-700 border-zinc-200'
-                    }`}
-                  >
-                    {'< 2g'} Đường
-                  </button>
-                </div>
-              </div>
-
-              {/* 3. Dietary Lifestyle Tags */}
-              <div>
-                <label className="block text-xs font-bold text-zinc-700 mb-2">Chế độ ăn phù hợp</label>
+              {/* Col 2: Dietary Needs */}
+              <div className="md:col-span-3 md:border-l md:border-stone-100 md:pl-6">
+                <label className="block text-xs font-semibold text-stone-700 mb-2.5">
+                  Chế độ ăn phù hợp
+                </label>
                 <div className="flex flex-wrap gap-1.5">
                   {ALL_DIETARY_OPTIONS.map((opt) => {
                     const isSelected = selectedDietary.includes(opt.value as DietaryTag);
@@ -243,92 +234,129 @@ export const ProductCatalog: React.FC = () => {
                       <button
                         key={opt.value}
                         onClick={() => toggleDietary(opt.value as DietaryTag)}
-                        className={`text-xs px-2.5 py-1.5 rounded-lg border font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                        className={`text-xs px-3 py-1.5 rounded-xl border font-medium transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-[#EBF7EE] text-[#1E7547] border-[#1E7547] font-bold shadow-2xs'
-                            : 'bg-white text-zinc-600 border-zinc-200 hover:border-zinc-300'
+                            ? 'bg-[#EEF6F0] text-[#163824] border-[#1E7547]/50 font-semibold'
+                            : 'bg-stone-50/70 text-stone-600 border-stone-200/70 hover:border-stone-300'
                         }`}
                       >
-                        <span>{opt.icon}</span>
-                        <span>{opt.value}</span>
-                        {isSelected && <Check className="w-3 h-3 text-[#1E7547]" />}
+                        {opt.value}
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* 4. Sàng lọc dị ứng (Loại trừ thành phần) */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-bold text-zinc-700">
-                    Sàng lọc dị ứng (Loại trừ)
+              {/* Col 3: Allergen Exclusions */}
+              <div className="md:col-span-5 md:border-l md:border-stone-100 md:pl-6">
+                <div className="flex items-center justify-between mb-2.5">
+                  <label className="block text-xs font-semibold text-stone-700">
+                    Loại trừ dị ứng (Bấm để gạch bỏ thành phần)
                   </label>
-                  <span className="text-[10px] text-zinc-400">Chọn để gạch bỏ</span>
                 </div>
-                <div className="grid grid-cols-2 gap-1.5">
+                <div className="flex flex-wrap gap-1.5">
                   {ALL_ALLERGENS.map((allergen) => {
                     const isExcluded = excludedAllergens.includes(allergen.value as Allergen);
                     return (
                       <button
                         key={allergen.value}
                         onClick={() => toggleAllergen(allergen.value as Allergen)}
-                        className={`text-[11px] p-2 rounded-lg border text-left flex items-center justify-between transition-all cursor-pointer ${
+                        className={`text-xs px-3 py-1.5 rounded-xl border flex items-center gap-1.5 transition-all cursor-pointer ${
                           isExcluded
-                            ? 'bg-rose-50 text-rose-700 border-rose-300 font-bold'
-                            : 'bg-[#FAF8F5] text-zinc-600 border-zinc-200 hover:border-zinc-300'
+                            ? 'bg-rose-50 text-rose-700 border-rose-200 font-semibold line-through'
+                            : 'bg-stone-50/70 text-stone-600 border-stone-200/70 hover:border-stone-300'
                         }`}
                       >
-                        <span className="truncate">{allergen.label}</span>
-                        {isExcluded ? (
-                          <X className="w-3.5 h-3.5 text-rose-600 shrink-0" />
-                        ) : (
-                          <span className="text-[10px] text-zinc-400 shrink-0">+</span>
-                        )}
+                        <span>{allergen.label}</span>
+                        {isExcluded && <X className="w-3 h-3 text-rose-500 shrink-0" />}
                       </button>
                     );
                   })}
                 </div>
-                {excludedAllergens.length > 0 && (
-                  <p className="text-[11px] text-rose-600 mt-2 font-medium">
-                    ⚠️ Đã loại bỏ bánh chứa {excludedAllergens.length} loại dị ứng.
-                  </p>
-                )}
               </div>
 
             </div>
-          </aside>
 
-          {/* Product Cards Container */}
-          <div className="lg:col-span-9">
-            {filteredProducts.length === 0 ? (
-              <div className="bg-white rounded-3xl p-12 text-center border border-zinc-200/90 space-y-4">
-                <div className="w-16 h-16 rounded-full bg-[#FAF8F5] flex items-center justify-center text-3xl mx-auto">
-                  🌾
-                </div>
-                <h3 className="text-xl font-bold text-[#153E26]">
-                  Không tìm thấy sản phẩm phù hợp với bộ lọc này
-                </h3>
-                <p className="text-xs sm:text-sm text-zinc-500 max-w-md mx-auto">
-                  Vui lòng nới lỏng mức calo tối đa hoặc bỏ chọn bớt các tiêu chí dị ứng để xem thêm các dòng bánh khác nhé.
-                </p>
+            {/* Bottom Filter Summary Bar */}
+            <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between text-xs">
+              <span className="text-stone-500">
+                Tìm thấy <strong className="text-[#163824]">{filteredProducts.length}</strong> sản phẩm phù hợp
+              </span>
+              <div className="flex items-center gap-3">
+                {totalFilterCount > 0 && (
+                  <button
+                    onClick={resetFilters}
+                    className="text-stone-500 hover:text-rose-600 font-medium flex items-center gap-1 cursor-pointer"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Đặt lại mặc định</span>
+                  </button>
+                )}
                 <button
-                  onClick={resetFilters}
-                  className="bg-[#1E7547] text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-md hover:bg-[#165a36] transition-colors cursor-pointer"
+                  onClick={() => setIsAdvancedFilterOpen(false)}
+                  className="bg-[#163824] text-white px-4 py-1.5 rounded-full font-semibold cursor-pointer"
                 >
-                  Xóa bộ lọc & Xem lại tất cả
+                  Thu gọn
                 </button>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
+            </div>
           </div>
+        )}
 
-        </div>
+        {/* Active Filter Chips (when drawer is closed) */}
+        {totalFilterCount > 0 && !isAdvancedFilterOpen && (
+          <div className="flex flex-wrap items-center gap-2 mb-6 text-xs">
+            <span className="text-stone-400">Đang lọc:</span>
+            {maxCalories < 200 && (
+              <span className="bg-white border border-stone-200 px-2.5 py-1 rounded-full flex items-center gap-1 text-stone-700">
+                ≤ {maxCalories} kcal
+                <button onClick={() => setMaxCalories(200)} className="hover:text-rose-500 cursor-pointer"><X className="w-3 h-3" /></button>
+              </span>
+            )}
+            {sugarFilter !== 'all' && (
+              <span className="bg-white border border-stone-200 px-2.5 py-1 rounded-full flex items-center gap-1 text-stone-700">
+                {sugarFilter === 'zero' ? '0g Đường' : '< 2g Đường'}
+                <button onClick={() => setSugarFilter('all')} className="hover:text-rose-500 cursor-pointer"><X className="w-3 h-3" /></button>
+              </span>
+            )}
+            {excludedAllergens.map((alg) => (
+              <span key={alg} className="bg-rose-50 border border-rose-200 text-rose-700 px-2.5 py-1 rounded-full flex items-center gap-1">
+                Không {alg}
+                <button onClick={() => toggleAllergen(alg)} className="hover:text-rose-900 cursor-pointer"><X className="w-3 h-3" /></button>
+              </span>
+            ))}
+            <button
+              onClick={resetFilters}
+              className="text-stone-500 hover:text-[#163824] underline ml-1 cursor-pointer"
+            >
+              Xóa tất cả
+            </button>
+          </div>
+        )}
+
+        {/* Product Grid: Clean 4-Column Layout */}
+        {filteredProducts.length === 0 ? (
+          <div className="bg-white rounded-3xl p-12 text-center border border-stone-200/70 max-w-lg mx-auto my-6 space-y-4">
+            <p className="text-base font-bold text-[#163824]">
+              Chưa có sản phẩm khớp với toàn bộ tiêu chí lọc
+            </p>
+            <p className="text-xs text-stone-500 leading-relaxed">
+              Bạn hãy thử tăng mức Calo tối đa hoặc bỏ chọn bớt một vài tiêu chí dị ứng để xem thêm các vị bánh khác nhé.
+            </p>
+            <button
+              onClick={resetFilters}
+              className="bg-[#163824] text-white px-5 py-2.5 rounded-full text-xs font-semibold hover:bg-[#1E7547] transition-colors cursor-pointer"
+            >
+              Đặt lại bộ lọc
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
 
       </div>
     </section>

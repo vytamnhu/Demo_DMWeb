@@ -1,103 +1,85 @@
 import React from 'react';
-import { Sprout } from 'lucide-react';
 
 export const FarmStorySection: React.FC = () => {
   return (
-    <section id="story-section" className="py-16 sm:py-20 bg-[#F6F3EB] border-b border-[#E5DFD3] relative overflow-hidden">
+    <section id="story-section" className="py-16 sm:py-24 bg-[#FAF8F5] border-b border-stone-200/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          {/* Left: Visual Collage */}
-          <div className="lg:col-span-6 relative">
+          {/* Left: Clean Visual Grid */}
+          <div className="lg:col-span-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-4">
                 <img
                   src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80"
                   alt="Nông trại yến mạch"
-                  className="rounded-2xl shadow-sm object-cover h-44 sm:h-56 w-full"
+                  className="rounded-2xl object-cover h-48 sm:h-60 w-full"
                 />
-                <div className="bg-[#1E7547] text-white p-4 rounded-2xl shadow-sm">
-                  <span className="text-2xl font-bold font-mono">100%</span>
-                  <p className="text-xs text-emerald-100 font-medium mt-0.5">Yến mạch nguyên cám nhập khẩu chính ngạch từ Úc</p>
+                <div className="bg-white p-5 rounded-2xl border border-stone-200/70">
+                  <span className="text-2xl font-extrabold text-[#163824]">100%</span>
+                  <p className="text-xs text-stone-500 mt-1">Yến mạch nguyên cám nhập khẩu từ Úc & Hạt Macca Tây Nguyên</p>
                 </div>
               </div>
 
-              <div className="space-y-4 pt-4">
-                <div className="bg-[#E59828] text-white p-4 rounded-2xl shadow-sm">
-                  <span className="text-2xl font-bold font-mono">120°C</span>
-                  <p className="text-xs text-amber-100 font-medium mt-0.5">Công nghệ nướng sấy chậm bảo toàn vi chất</p>
+              <div className="space-y-4 pt-6">
+                <div className="bg-[#163824] text-white p-5 rounded-2xl">
+                  <span className="text-2xl font-extrabold">120°C</span>
+                  <p className="text-xs text-emerald-100/80 mt-1">Công nghệ nướng sấy chậm giúp giữ trọn vi chất tự nhiên</p>
                 </div>
                 <img
                   src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80"
                   alt="Hạt dinh dưỡng nướng mộc"
-                  className="rounded-2xl shadow-sm object-cover h-44 sm:h-56 w-full"
+                  className="rounded-2xl object-cover h-48 sm:h-60 w-full"
                 />
               </div>
-            </div>
-
-            {/* Clean badge */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-3.5 py-2 rounded-full border border-[#1E7547] shadow-lg flex items-center gap-2">
-              <Sprout className="w-4 h-4 text-[#1E7547]" />
-              <span className="text-xs font-bold text-zinc-900">
-                Từ Nông Trại Đến Bàn Ăn
-              </span>
             </div>
           </div>
 
           {/* Right: The Brand Narrative */}
-          <div className="lg:col-span-6 space-y-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#D97706] bg-[#FEF4E5] px-3 py-1 rounded-full border border-[#FCD34D]">
-              Hành Trình Hạt Xanh
+          <div className="lg:col-span-6 space-y-5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#1E7547]">
+              Hành trình hạt xanh
             </span>
 
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#153E26] leading-tight">
-              Khởi Đầu Từ Mong Muốn: <br />
-              <span className="text-[#1E7547]">"Bánh healthy phải thực sự ngon miệng"</span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#163824] leading-tight">
+              Khởi đầu từ mong muốn: <br />
+              <span className="text-[#1E7547]">Bánh lành mạnh phải thực sự ngon</span>
             </h2>
 
-            <p className="text-zinc-600 text-sm leading-relaxed">
-              Thị trường đầy ắp các loại thanh năng lượng nhập khẩu khô khốc hoặc những gói bánh ngũ cốc chứa tới 40% đường tinh luyện ẩn giấu.
+            <p className="text-stone-600 text-sm leading-relaxed">
+              SOWELL ra đời để mang lại trải nghiệm dinh dưỡng cân bằng: kết hợp hạt Macca Đắk Lắk béo bùi, hạt điều Bình Phước tuyển chọn với yến mạch Úc nguyên cám và vị ngọt thanh dịu từ mật hoa dừa tự nhiên.
             </p>
 
-            <p className="text-zinc-600 text-sm leading-relaxed">
-              <strong className="text-zinc-900 font-semibold">SOWELL</strong> ra đời để mang lại trải nghiệm dinh dưỡng hoàn toàn khác: 
-              chúng tôi kết hợp hạt Macca Đắk Lắk béo bùi, hạt điều Bình Phước tuyển chọn với yến mạch Úc nguyên cám 
-              và vị ngọt mát lành từ <strong>mật hoa dừa nước tự nhiên</strong>. 
-              Không đường hóa học, không phẩm màu, không chất bảo quản.
-            </p>
-
-            {/* 3 Step Timeline */}
-            <div className="space-y-3 pt-2">
-              <div className="flex items-start gap-3">
-                <div className="w-7 h-7 rounded-lg bg-[#EBF7EE] text-[#1E7547] flex items-center justify-center shrink-0 font-bold text-xs">
-                  1
+            {/* Clean 3-Step Process */}
+            <div className="space-y-4 pt-2">
+              {[
+                {
+                  step: '01',
+                  title: 'Tuyển chọn hạt mộc loại 1',
+                  desc: 'Chỉ 15% mẻ hạt đạt kích thước tiêu chuẩn và vượt qua kiểm định chất lượng.'
+                },
+                {
+                  step: '02',
+                  title: 'Phối trộn mật hoa dừa Low GI',
+                  desc: 'Vị ngọt thanh dịu tự nhiên, giàu khoáng chất và không làm tăng vọt đường huyết.'
+                },
+                {
+                  step: '03',
+                  title: 'Nướng nhiệt chậm & đóng gói chuẩn',
+                  desc: 'Giữ độ giòn rụm tự nhiên mà không cần sử dụng chất bảo quản nhân tạo.'
+                }
+              ].map((item) => (
+                <div key={item.step} className="flex items-start gap-3.5">
+                  <span className="text-xs font-bold text-[#1E7547] bg-[#EEF6F0] px-2.5 py-1 rounded-lg shrink-0 mt-0.5">
+                    {item.step}
+                  </span>
+                  <div>
+                    <h4 className="font-bold text-sm text-[#163824]">{item.title}</h4>
+                    <p className="text-xs text-stone-500 mt-0.5">{item.desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-xs sm:text-sm text-zinc-900">Tuyển chọn hạt mộc loại 1</h4>
-                  <p className="text-xs text-zinc-500">Chỉ 15% mẻ hạt đạt kích thước tiêu chuẩn, kiểm định aflatoxin.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-7 h-7 rounded-lg bg-[#FEF4E5] text-[#D97706] flex items-center justify-center shrink-0 font-bold text-xs">
-                  2
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs sm:text-sm text-zinc-900">Phối trộn mật dừa Low GI</h4>
-                  <p className="text-xs text-zinc-500">Vị ngọt thanh dịu từ mật hoa dừa tự nhiên, giàu khoáng chất Kali.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-7 h-7 rounded-lg bg-[#EBF7EE] text-[#1E7547] flex items-center justify-center shrink-0 font-bold text-xs">
-                  3
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs sm:text-sm text-zinc-900">Nướng nhiệt chậm & Đóng màng nhôm</h4>
-                  <p className="text-xs text-zinc-500">Giữ giòn tự nhiên 6 tháng mà không cần chất bảo quản nhân tạo.</p>
-                </div>
-              </div>
+              ))}
             </div>
 
           </div>
